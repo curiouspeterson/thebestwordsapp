@@ -1,13 +1,12 @@
 import nltk
 import random
+from textblob import TextBlob
 
-s = 'I have a dream'
 
-text = nltk.word_tokenize(s)
-
-nltk.pos_tag(text)
-
-text[3:3] = ['great']
+#s = 'I have a dream'
+#text = nltk.word_tokenize(s)
+#nltk.pos_tag(text)
+#text[3:3] = ['great']
 
 def insert_great(s):
 	tokens = nltk.word_tokenize(s)
@@ -41,11 +40,11 @@ def insert_better(s):
 
 ## Textblob can use a whole paragraph, and iterate over sentences. 
 ## It can also do pos tagging
-TextBlob(sentence).polarity
+#TextBlob(sentence).polarity
 
 
-s = "I thought I was good. I was wrong. I'm the best."
-for sent in TextBlob(s).sentences: print(sent.sentiment.polarity)
+#s = "I thought I was good. I was wrong. I'm the best."
+#for sent in TextBlob(s).sentences: print(sent.sentiment.polarity)
 
 
 def insert_stinger(s):
@@ -86,12 +85,15 @@ def prepend_social(s):
 
 
 
-
-from textblob import TextBlob
-S = {}
-for i in range(len(dockets)):
-    docket = dockets[i]
-    ## Petitioner is file 0; Respondent is file 1.  Res - Pet > 0 favors Respondent
-    ## files 0,2,4,6,8 should be petitioners, 1,3,5,7,9 should be respondents
-    S[docket] = {'sentiment_BREYER':0.0, 'sentiment_GINSBURG':0.0, 'sentiment_KENNEDY':0.0, 'sentiment_ROBERTS':0.0, 'sentiment_SCALIA':0.0}
-    S[docket]['sentiment_BREYER'] = TextBlob(X[0][i]).sentiment[0]
+test_string = "I thought I was good. I was wrong. I'm the best."
+print('test_string:')
+print(test_string)
+print()
+print('prepend meta-statement:')
+print(prepend_meta(test_string))
+print()
+print('prepend social prof:')
+print(prepend_social(test_string))
+print()
+print('append stinger:')
+print(insert_stinger(test_string))
