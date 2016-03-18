@@ -4,11 +4,6 @@ import random
 from textblob import TextBlob
 
 
-#s = 'I have a dream'
-#text = nltk.word_tokenize(s)
-#nltk.pos_tag(text)
-#text[3:3] = ['great']
-
 
 def break_paragraph(p):
 	return [str(x) for x in TextBlob(p).sentences]
@@ -66,14 +61,26 @@ def insert_better(s):
 	
 
 
-## Textblob can use a whole paragraph, and iterate over sentences. 
-## It can also do pos tagging
-#TextBlob(sentence).polarity
-
-
-#s = "I thought I was good. I was wrong. I'm the best."
-#for sent in TextBlob(s).sentences: print(sent.sentiment.polarity)
-
+def append_name_stinger(s):
+	""" Insert a self-aggrandizing catchphrase compared to another proper noun. """
+	new_s = s
+	tokens = nltk.word_tokenize(new_s)
+	pos_tokens = nltk.pos_tag(tokens)
+	pos_only = [x[1] for x in pos_tokens]
+	if 'NNP' in pos_only:
+		noun = tokens[pos_only.index('NNP')]
+		if random.random() < 1.0:	
+			phrases = [	"I have nothing against {}.",
+						"{} is nice, but I'm a winner.",
+						"{} is a great guy.",
+						"I'm better than {}.",
+						"I'm much smarter than {}.",
+						"{} is a real loser.",
+						"{} tries hard, but is weak. Really weak.",
+						"{} came to my wedding."]
+			new_s = new_s + ' ' + random.choice(phrases).format(noun)
+	return new_s
+	
 
 def insert_stinger(s):
 	neg_stingers = ['Pathetic.', 'Loser.', 'The worst.', 'Dummies.', 'Tough!', 'Sad!', "What a joke."]
@@ -98,7 +105,9 @@ def prepend_meta(s):
 	metas = ["I've said this before and I'll say it again.",
 			"I've been saying this for a long time.",
 			"You know what?",
-			"OK?"]
+			"OK?",
+			"Believe me.",
+			"Let me tell you."]
 	new_s = s
 	r = random.random()
 	if r < 0.8:
@@ -111,7 +120,9 @@ def prepend_social(s):
 			"So many people ask me this.",
 			"Everybody knows it.",
 			"You know it's true.",
-			"Believe me."]
+			"Everyone tells me this",
+			"Everybody thinks so.",
+			"I get thousands of tweets about this every day."]
 	new_s = s
 	r = random.random()
 	if r < 0.8:
@@ -156,7 +167,7 @@ def trumpify(text):
 			f = random.choice(functions)
 			#print(f)
 			trumpified_sentence = f(s)
-			#print(trumpified_sentence)
+			print(trumpified_sentence, TextBlob(s).sentiment.polarity)
 			trumpified_text += ' ' + trumpified_sentence
 	return trumpified_text
 	
@@ -184,6 +195,20 @@ def main(argv):
 		#test_string = "My friend and I were excited to go to the party."
 	
 	test_all_functions(test_string)
+
+
+	#s = 'I have a dream'
+	#text = nltk.word_tokenize(s)
+	#nltk.pos_tag(text)
+	#text[3:3] = ['great']
+
+	## Textblob can use a whole paragraph, and iterate over sentences. 
+	## It can also do pos tagging
+	#TextBlob(sentence).polarity
+
+	#s = "I thought I was good. I was wrong. I'm the best."
+	#for sent in TextBlob(s).sentences: print(sent.sentiment.polarity)
+
 	
 	
 if __name__ == "__main__":
