@@ -1,9 +1,12 @@
+import tornado.web
+import tornado.websocket
+import tornado.ioloop
 import sys, getopt
 import nltk
+import json
 import random
 from textblob import TextBlob
 from nltk.corpus import names
-
 
 
 _name_list = [name for name in names.words('male.txt')] + [name for name in names.words('female.txt')]
@@ -220,44 +223,72 @@ def trumpify(text):
 	return trumpified_text
 	
 		
+class WebSocketHandler(tornado.websocket.WebSocketHandler):
+    def open(self):
+        print "Connection established."
+
+    def check_origin(self, origin):
+        return True
+
+    def on_message(self, message):
+        print "Received message: " + message
+        trump_msg = trumpify(json.loads(message))
+        print "Sending back: " + trump_msg
+        self.write_message(trump_msg)
+
+    def on_close(self):
+        print "Connection closed."
+
+def make_app():
+    return tornado.web.Application([
+        (r"/", WebSocketHandler),
+    ])
+
+        
 def main(argv):
+    mode = "test"
+    command_line_instructions = 'bestwords.py -i <test_string>'
+    try:
+        opts, args = getopt.getopt(argv,"lhi:",["config=","param2="])
+    except getopt.GetoptError:
+        print (command_line_instructions)
+        sys.exit()
+    if (len(opts) > 0):    
+        #print args
+        #print opts    
+        for opt, arg in opts:
+            #print opt
+            if opt == '-h':
+                print (command_line_instructions)
+                sys.exit()
+            elif opt in ("-i", "--param1"):
+                test_string = arg
+            elif opt in ("-l", "--live"):
+                mode = "live"
+    else:
+        test_string = "I thought I was good. I was wrong. I'm the best."
+        #test_string = "My friend and I were excited to go to the party."
+  
+    if mode == 'test':
+        test_all_functions(test_string)
+    elif mode == 'live':
+        server = make_app()
+        server.listen(1234)
+        tornado.ioloop.IOLoop.instance().start()
+    
+    #s = 'I have a dream'
+    #text = nltk.word_tokenize(s)
+    #nltk.pos_tag(text)
+    #text[3:3] = ['great']
 
-	command_line_instructions = 'bestwords.py -i <test_string>'
-	try:
-		opts, args = getopt.getopt(argv,"hi:",["config=","param2="])
-	except getopt.GetoptError:
-		print (command_line_instructions)
-		sys.exit()
-	if (len(opts) > 0):	
-		#print args
-		#print opts	
-		for opt, arg in opts:
-			#print opt
-			if opt == '-h':
-				print (command_line_instructions)
-				sys.exit()
-			elif opt in ("-i", "--param1"):
-				test_string = arg
-	else:
-		test_string = "I thought I was good. I was wrong. I'm the best."
-		#test_string = "My friend and I were excited to go to the party."
-	
-	test_all_functions(test_string)
+    ## Textblob can use a whole paragraph, and iterate over sentences. 
+    ## It can also do pos tagging
+    #TextBlob(sentence).polarity
 
+    #s = "I thought I was good. I was wrong. I'm the best."
+    #for sent in TextBlob(s).sentences: print(sent.sentiment.polarity)
 
-	#s = 'I have a dream'
-	#text = nltk.word_tokenize(s)
-	#nltk.pos_tag(text)
-	#text[3:3] = ['great']
-
-	## Textblob can use a whole paragraph, and iterate over sentences. 
-	## It can also do pos tagging
-	#TextBlob(sentence).polarity
-
-	#s = "I thought I was good. I was wrong. I'm the best."
-	#for sent in TextBlob(s).sentences: print(sent.sentiment.polarity)
-
-	
-	
+    
+    
 if __name__ == "__main__":
-	main( sys.argv[1:] ) 
+    main( sys.argv[1:] ) 
