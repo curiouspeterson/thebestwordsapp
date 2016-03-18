@@ -11,7 +11,9 @@
     "start": "brunch watch --server",
     "build": "brunch build --production"
   },
-  "dependencies": {},
+  "dependencies": {
+    "clipboard": "^1.5.9"
+  },
   "devDependencies": {
     "javascript-brunch": "^2.0.0",
     "css-brunch": "^2.0.0",

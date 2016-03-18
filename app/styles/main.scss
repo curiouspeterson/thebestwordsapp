@@ -1,9 +1,5 @@
-$default-bg: #c5b358 /*aka vegas-gold */
+$default-bg: #c5b358; /*aka vegas-gold */
 $default-text: black;
-
-html{
-  background: $default-bg;
-}
 
 body {
   font-family: Georgia, serif;
@@ -13,6 +9,7 @@ body {
   -moz-background-size: cover;
   -o-background-size: cover;
   background-size: cover;
+  background-color: $default-bg;
 }
 
 h1 {
