@@ -141,7 +141,7 @@ def self_aggrandize(s, prb=1.0):
 	phrases = ['I have the best people.',
 				'My people are very good.',
 				'I know things.',
-				'I’m very successful.',
+				'I\'m very successful.',
 				'I will do it better.',
 				'I\'m going to do it.']
 	if random.random() < prb:
@@ -225,14 +225,23 @@ def trumpify(text, prb=1.0):
 		sentences += break_long_sentence(s)
 	print('sentences:', sentences)
 	functions = [prepend_meta, prepend_social, insert_stinger, make_great, append_name_stinger, append_affirmation, insult_names]
+	fn_prbs =   [0.1,          0.2,            0.2,            0.6,        0.25,                 0.3,                0.8]
 	trumpified_text = ''
 	for s in sentences:
+          trumpified_sentence = s
+          for fn,prb in zip(functions,fn_prbs):
+              if random.random() < prb:
+                  trumpified_sentence = fn(trumpified_sentence)
+                  #print "Applied %s.\nOriginal sentence: %s\nNew sentence: %s" % (fn.__name__, s, trumpified_sentence)
+          trumpified_text += ' ' + trumpified_sentence
+	'''
 		if random.random() < prb:
 			f = random.choice(functions)
 			#print(f)
 			trumpified_sentence = f(s)
 			#print(trumpified_sentence, TextBlob(s).sentiment.polarity)
 			trumpified_text += ' ' + trumpified_sentence
+	'''
 	return trumpified_text
 
 
