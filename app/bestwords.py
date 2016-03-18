@@ -46,8 +46,6 @@ def insert_great(s):
 	tokens[the_idx:the_idx] = ['great']
 	new_s = ' '.join(tokens)
 	return new_s
-	
-
 
 def insert_better(s):
 	""" Need to worry about noun modifiers. 
@@ -161,6 +159,12 @@ def prepend_social(s):
 		new_s = random.choice(socials) + ' ' + new_s
 	return new_s
 
+def append_affirmation(s,prb):
+    affirmations = ['I\'m all for it.', 
+                    'You know it\'s true.']
+    if random.random() < prb:
+        s = ' '.join([s,random.choice(affirmations)])
+    return s
 
 def test_all_functions(test_string):
 	print('test_string:')
@@ -180,6 +184,9 @@ def test_all_functions(test_string):
 	print()
 	print('insult names:')
 	print(insult_names(test_string, 1.))
+	print()
+	print('append affirmation:')
+	print(append_affirmation(test_string, 1.))
 	print()
 	print('breaking paragraph/sentence down:')
 	for sentence in break_paragraph(test_string):
