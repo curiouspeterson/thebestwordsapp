@@ -1,0 +1,102 @@
+$default-bg: #c5b358 /*aka vegas-gold */
+$default-text: black;
+
+html{
+  background: $default-bg;
+}
+
+body {
+  font-family: Georgia, serif;
+  font-size: 16px;
+  background: url(gold_sitting_room.jpeg) no-repeat center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+
+h1 {
+  font-size: 5em;
+  font-family: 'Pinyon Script', cursive;
+  color: white;
+  text-align: center;
+  vertical-align: center;
+
+  & > small {
+    color: red;
+    font-size: 70%;
+  }
+}
+
+.set-pick-small{
+  height: 100px;
+}
+
+.set-pick-med{
+  height: 175px;
+}
+
+.text{
+  textarea{
+    width: 422px;
+    height: 232px;
+    padding: 5px;
+    resize: none;
+    border: none;
+    opacity: 0.8;
+  }
+    
+  textarea:focus{
+    outline-color: #fcf5a5;
+    opacity: 1;
+  }
+  
+  display: block;
+  position: absolute;
+  left: 50%;
+  margin: -116px 0 0 -211px; /* half the height and width */
+}
+
+.btn-wrapper{
+  text-align: center;
+  bottom: 0px;
+}
+
+.translateBtn {
+	-moz-box-shadow:inset 0px -3px 7px 0px #29bbff;
+	-webkit-box-shadow:inset 0px -3px 7px 0px #29bbff;
+	box-shadow:inset 0px -3px 7px 0px #29bbff;
+	background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #2dabf9), color-stop(1, #0688fa));
+	background:-moz-linear-gradient(top, #2dabf9 5%, #0688fa 100%);
+	background:-webkit-linear-gradient(top, #2dabf9 5%, #0688fa 100%);
+	background:-o-linear-gradient(top, #2dabf9 5%, #0688fa 100%);
+	background:-ms-linear-gradient(top, #2dabf9 5%, #0688fa 100%);
+	background:linear-gradient(to bottom, #2dabf9 5%, #0688fa 100%);
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#2dabf9', endColorstr='#0688fa',GradientType=0);
+	background-color:#2dabf9;
+	-moz-border-radius:6px;
+	-webkit-border-radius:6px;
+	border-radius:6px;
+	display:inline-block;
+	cursor:pointer;
+	color:#ffffff;
+	font-family:Trebuchet MS;
+	font-size:28px;
+	padding:19px 76px;
+	text-decoration:none;
+	text-shadow:0px 1px 0px #263666;
+}
+.translateBtn:hover {
+	background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #0688fa), color-stop(1, #2dabf9));
+	background:-moz-linear-gradient(top, #0688fa 5%, #2dabf9 100%);
+	background:-webkit-linear-gradient(top, #0688fa 5%, #2dabf9 100%);
+	background:-o-linear-gradient(top, #0688fa 5%, #2dabf9 100%);
+	background:-ms-linear-gradient(top, #0688fa 5%, #2dabf9 100%);
+	background:linear-gradient(to bottom, #0688fa 5%, #2dabf9 100%);
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#0688fa', endColorstr='#2dabf9',GradientType=0);
+	background-color:#0688fa;
+}
+.translateBtn:active {
+	position:relative;
+	top:1px;
+}
