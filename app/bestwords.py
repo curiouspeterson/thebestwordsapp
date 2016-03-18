@@ -9,6 +9,22 @@ from textblob import TextBlob
 #nltk.pos_tag(text)
 #text[3:3] = ['great']
 
+
+def break_long_sentence(s):
+	tokens = nltk.word_tokenize(s)
+	pos_tokens = nltk.pos_tag(tokens)
+	## get places to split long sentences
+	divider_idx = [idx for idx in range(len(pos_tokens)) if pos_tokens[idx][1] in ('CC', 'WDT')]
+	print(divider_idx)
+	starts = [0] + divider_idx
+	stops = divider_idx + [len(tokens)]
+	subsentences = []
+	for (start,stop) in zip(starts,stops):
+		subsentences.append(' '.join(tokens[start:stop]))
+	return subsentences
+	
+	
+	
 def insert_great(s):
 	tokens = nltk.word_tokenize(s)
 	pos_tokens = nltk.pos_tag(tokens)
@@ -83,7 +99,8 @@ def prepend_meta(s):
 
 def prepend_social(s):
 	socials = ["I get asked this all the time.",
-			"So many people ask me this."]
+			"So many people ask me this."
+			"Everybody knows it."]
 	new_s = s
 	r = random.random()
 	if r > 0.8:
