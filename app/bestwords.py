@@ -1,14 +1,30 @@
+import sys, getopt
 import nltk
 import random
+from textblob import TextBlob
 
-s = 'I have a dream'
 
-text = nltk.word_tokenize(s)
+#s = 'I have a dream'
+#text = nltk.word_tokenize(s)
+#nltk.pos_tag(text)
+#text[3:3] = ['great']
 
-nltk.pos_tag(text)
 
-text[3:3] = ['great']
-
+def break_long_sentence(s):
+	tokens = nltk.word_tokenize(s)
+	pos_tokens = nltk.pos_tag(tokens)
+	## get places to split long sentences
+	divider_idx = [idx for idx in range(len(pos_tokens)) if pos_tokens[idx][1] in ('CC', 'WDT')]
+	print(divider_idx)
+	starts = [0] + divider_idx
+	stops = divider_idx + [len(tokens)]
+	subsentences = []
+	for (start,stop) in zip(starts,stops):
+		subsentences.append(' '.join(tokens[start:stop]))
+	return subsentences
+	
+	
+	
 def insert_great(s):
 	tokens = nltk.word_tokenize(s)
 	pos_tokens = nltk.pos_tag(tokens)
@@ -24,6 +40,9 @@ def insert_great(s):
 
 
 def insert_better(s):
+	""" Need to worry about noun modifiers. 
+		'a test sentence' may become 'a test great sentence' 
+		'a good house' might become 'a good great house' """
 	better_words = ['great', 'best', 'huge']
 	the_word = random.choice(better_words)
 	tokens = nltk.word_tokenize(s)
@@ -31,9 +50,10 @@ def insert_better(s):
 	## get the noun indices
 	noun_idx = [idx for idx in range(len(pos_tokens)) if pos_tokens[idx][1] == 'NN']
 	## choose one
-	the_idx = random.choice(noun_idx)
-	## slicing
-	tokens[the_idx:the_idx] = [the_word]
+	if len(noun_idx) > 0:
+		the_idx = random.choice(noun_idx)
+		## slicing
+		tokens[the_idx:the_idx] = [the_word]
 	new_s = ' '.join(tokens)
 	return new_s
 	
@@ -41,27 +61,29 @@ def insert_better(s):
 
 ## Textblob can use a whole paragraph, and iterate over sentences. 
 ## It can also do pos tagging
-TextBlob(sentence).polarity
+#TextBlob(sentence).polarity
 
 
-s = "I thought I was good. I was wrong. I'm the best."
-for sent in TextBlob(s).sentences: print(sent.sentiment.polarity)
+#s = "I thought I was good. I was wrong. I'm the best."
+#for sent in TextBlob(s).sentences: print(sent.sentiment.polarity)
 
 
 def insert_stinger(s):
 	neg_stingers = ['Pathetic.', 'Loser.', 'The worst.', 'Dummies.', 'Tough!', 'Sad!', "What a joke."]
 	pos_stingers = ['The best.', 'America.', 'Amazing!']
-	score = TextBlob(s).sentiment.polarity
+	new_s = s
+	## get the sentiment of the sentence and a random number
+	score = TextBlob(new_s).sentiment.polarity
 	r = random.random()
-	stinger = ''
+	## If r is less than abs(score) insert something
 	if r < abs(score): 
 		if (score > 0):
 			## Chose positive stinger
-			stinger = random.choice(pos_stingers)
+			new_s = new_s + ' ' + random.choice(pos_stingers)
 		if (score < 0):
 			## Choose negative stinger
-			stinger = random.choice(neg_stingers)
-	return s + ' ' + stinger
+			new_s = new_s + ' ' + random.choice(neg_stingers)
+	return new_s
 
 
 
@@ -77,7 +99,8 @@ def prepend_meta(s):
 
 def prepend_social(s):
 	socials = ["I get asked this all the time.",
-			"So many people ask me this."]
+			"So many people ask me this."
+			"Everybody knows it."]
 	new_s = s
 	r = random.random()
 	if r > 0.8:
@@ -85,13 +108,48 @@ def prepend_social(s):
 	return new_s
 
 
+def test_all_functions(test_string):
+	print('test_string:')
+	print(test_string)
+	print()
+	print('prepend meta-statement:')
+	print(prepend_meta(test_string))
+	print()
+	print('prepend social prof:')
+	print(prepend_social(test_string))
+	print()
+	print('append stinger:')
+	print(insert_stinger(test_string))
+	print()
+	print('insert better:')
+	print(insert_better(test_string))
+	
 
 
-from textblob import TextBlob
-S = {}
-for i in range(len(dockets)):
-    docket = dockets[i]
-    ## Petitioner is file 0; Respondent is file 1.  Res - Pet > 0 favors Respondent
-    ## files 0,2,4,6,8 should be petitioners, 1,3,5,7,9 should be respondents
-    S[docket] = {'sentiment_BREYER':0.0, 'sentiment_GINSBURG':0.0, 'sentiment_KENNEDY':0.0, 'sentiment_ROBERTS':0.0, 'sentiment_SCALIA':0.0}
-    S[docket]['sentiment_BREYER'] = TextBlob(X[0][i]).sentiment[0]
+def main(argv):
+
+	command_line_instructions = 'bestwords.py -i <test_string>'
+	try:
+		opts, args = getopt.getopt(argv,"hi:",["config=","param2="])
+	except getopt.GetoptError:
+		print (command_line_instructions)
+		sys.exit()
+	if (len(opts) > 0):	
+		#print args
+		#print opts	
+		for opt, arg in opts:
+			#print opt
+			if opt == '-h':
+				print (command_line_instructions)
+				sys.exit()
+			elif opt in ("-i", "--param1"):
+				test_string = arg
+	else:
+		test_string = "I thought I was good. I was wrong. I'm the best."
+		#test_string = "My friend and I were excited to go to the party."
+	
+	test_all_functions(test_string)
+	
+	
+if __name__ == "__main__":
+	main( sys.argv[1:] ) 
