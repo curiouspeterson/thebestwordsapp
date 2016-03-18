@@ -32,9 +32,12 @@ def break_long_sentence(s):
 	
 
 def make_great(s):
-	""" Need to worry about noun modifiers. 
-		'a test sentence' may become 'a test great sentence' 
-		'a good house' might become 'a good great house' """
+	''' 
+	Insert superlative in front of a noun.
+	Need to worry about noun modifiers. 
+	'a test sentence' may become 'a test great sentence' 
+	'a good house' might become 'a good great house' 
+	'''
 	better_words = ['great', 'best', 'huge']
 	the_word = random.choice(better_words)
 	tokens = nltk.word_tokenize(s)
@@ -52,7 +55,7 @@ def make_great(s):
 
 def insult_names(s, prb=1.0):
     '''
-        Modifies a name in string s with probability prb.
+    Modifies a name in string s with probability prb.
     '''
     name_words = identify_names(s)
     cur_str_idx = 0
@@ -120,9 +123,7 @@ def insert_stinger(s, prb=1.0):
 	new_s = s
 	## get the sentiment of the sentence and a random number
 	score = TextBlob(new_s).sentiment.polarity
-	r = random.random()
-	## If r is less than abs(score) insert something
-	if r < prb: ##r < abs(score): 
+	if random.random() < prb: ##r < abs(score): 
 		if (score > 0):
 			## Chose positive stinger
 			new_s = new_s + ' ' + random.choice(pos_stingers)
@@ -132,32 +133,43 @@ def insert_stinger(s, prb=1.0):
 	return new_s
 
 
+def self_aggrandize(s, prb=1.0):
+	""" Append an unrelated self-aggrandizing phrase. """
+	phrases = ['I have the best people.',
+				'My people are very good.',
+				'I know things.',
+				'I’m very successful.',
+				'I will do it better.',
+				'I\'m going to do it.']
+	if random.random() < prb:
+		s = ' '.join([s,random.choice(phrases)])
+	return s
+
 
 def prepend_meta(s, prb=1.0):
+	""" Prepend a statement about talking. """
 	metas = ["I've said this before and I'll say it again.",
 			"I've been saying this for a long time.",
 			"You know what?",
 			"OK?",
 			"Let me tell you."]
-	new_s = s
-	r = random.random()
-	if r < prb:
-		new_s = random.choice(metas) + ' ' + new_s
-	return new_s
+	if random.random() < prb:
+		s = ' '.join([random.choice(metas), s])
+	return s
 
 
 def prepend_social(s, prb=1.0):
+	""" Prepend social proof. """
 	socials = ["I get asked this all the time.",
 			"So many people ask me this.",
 			"Everybody knows it.",
 			"Everyone tells me this.",
 			"Everybody thinks so.",
 			"I get thousands of tweets about this every day."]
-	new_s = s
-	r = random.random()
-	if r < prb:
-		new_s = random.choice(socials) + ' ' + new_s
-	return new_s
+	if random.random() < prb:
+		s = ' '.join([random.choice(social), s])
+	return s
+
 
 def append_affirmation(s, prb=1.0):
     affirmations = ['I\'m all for it.', 
@@ -166,6 +178,7 @@ def append_affirmation(s, prb=1.0):
     if random.random() < prb:
         s = ' '.join([s,random.choice(affirmations)])
     return s
+
 
 def test_all_functions(test_string):
 	print('test_string:')
@@ -201,7 +214,7 @@ def test_all_functions(test_string):
 	print(trumpify(test_string))
 
 
-def trumpify(text):
+def trumpify(text, prb=1.0):
 	long_sentences = break_paragraph(text)
 	print('long:', long_sentences)
 	sentences = []
@@ -211,15 +224,16 @@ def trumpify(text):
 	functions = [prepend_meta, prepend_social, insert_stinger, make_great, append_name_stinger, append_affirmation, insult_names]
 	trumpified_text = ''
 	for s in sentences:
-		if random.random() < 1.0:
+		if random.random() < prb:
 			f = random.choice(functions)
 			#print(f)
 			trumpified_sentence = f(s)
-			print(trumpified_sentence, TextBlob(s).sentiment.polarity)
+			#print(trumpified_sentence, TextBlob(s).sentiment.polarity)
 			trumpified_text += ' ' + trumpified_sentence
 	return trumpified_text
+
+
 	
-		
 def main(argv):
 
 	command_line_instructions = 'bestwords.py -i <test_string>'
@@ -250,12 +264,6 @@ def main(argv):
 	#nltk.pos_tag(text)
 	#text[3:3] = ['great']
 
-	## Textblob can use a whole paragraph, and iterate over sentences. 
-	## It can also do pos tagging
-	#TextBlob(sentence).polarity
-
-	#s = "I thought I was good. I was wrong. I'm the best."
-	#for sent in TextBlob(s).sentences: print(sent.sentiment.polarity)
 
 	
 	
