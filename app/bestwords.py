@@ -10,17 +10,24 @@ from textblob import TextBlob
 #text[3:3] = ['great']
 
 
+def break_paragraph(p):
+	return [str(x) for x in TextBlob(p).sentences]
+
+
 def break_long_sentence(s):
 	tokens = nltk.word_tokenize(s)
 	pos_tokens = nltk.pos_tag(tokens)
 	## get places to split long sentences
 	divider_idx = [idx for idx in range(len(pos_tokens)) if pos_tokens[idx][1] in ('CC', 'WDT')]
-	print(divider_idx)
+	#print(divider_idx)
 	starts = [0] + divider_idx
 	stops = divider_idx + [len(tokens)]
 	subsentences = []
 	for (start,stop) in zip(starts,stops):
-		subsentences.append(' '.join(tokens[start:stop]))
+		sub = ' '.join(tokens[start:stop])
+		if sub[-1] not in ('.','!','?'):
+			sub += '.'
+		subsentences.append(sub.capitalize())
 	return subsentences
 	
 	
@@ -76,7 +83,7 @@ def insert_stinger(s):
 	score = TextBlob(new_s).sentiment.polarity
 	r = random.random()
 	## If r is less than abs(score) insert something
-	if r < abs(score): 
+	if r<1.0: ##r < abs(score): 
 		if (score > 0):
 			## Chose positive stinger
 			new_s = new_s + ' ' + random.choice(pos_stingers)
@@ -89,21 +96,25 @@ def insert_stinger(s):
 
 def prepend_meta(s):
 	metas = ["I've said this before and I'll say it again.",
-			"I've been saying this for a long time."]
+			"I've been saying this for a long time.",
+			"You know what?",
+			"OK?"]
 	new_s = s
 	r = random.random()
-	if r > 0.8:
+	if r < 0.8:
 		new_s = random.choice(metas) + ' ' + new_s
 	return new_s
 
 
 def prepend_social(s):
 	socials = ["I get asked this all the time.",
-			"So many people ask me this."
-			"Everybody knows it."]
+			"So many people ask me this.",
+			"Everybody knows it.",
+			"You know it's true.",
+			"Believe me."]
 	new_s = s
 	r = random.random()
-	if r > 0.8:
+	if r < 0.8:
 		new_s = random.choice(socials) + ' ' + new_s
 	return new_s
 
@@ -123,9 +134,33 @@ def test_all_functions(test_string):
 	print()
 	print('insert better:')
 	print(insert_better(test_string))
+	print()
+	print('breaking paragraph/sentence down:')
+	for sentence in break_paragraph(test_string):
+		for subsentence in break_long_sentence(sentence):
+			print(subsentence)
+	print()
+
+
+def trumpify(text):
+	long_sentences = break_paragraph(text)
+	print('long:', long_sentences)
+	sentences = []
+	for s in long_sentences:
+		sentences += break_long_sentence(s)
+	print('sentences:', sentences)
+	functions = [prepend_meta, prepend_social, insert_stinger, insert_better]
+	trumpified_text = ''
+	for s in sentences:
+		if random.random() < 1.0:
+			f = random.choice(functions)
+			#print(f)
+			trumpified_sentence = f(s)
+			#print(trumpified_sentence)
+			trumpified_text += ' ' + trumpified_sentence
+	return trumpified_text
 	
-
-
+		
 def main(argv):
 
 	command_line_instructions = 'bestwords.py -i <test_string>'
