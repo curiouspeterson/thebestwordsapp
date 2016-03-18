@@ -57,39 +57,39 @@ def make_great(s):
 
 
 def insult_names(s, prb=1.0):
-    '''
-    Modifies a name in string s with probability prb.
-    '''
-    name_words = identify_names(s)
-    cur_str_idx = 0
-    for idx,name in enumerate(name_words):
-        orig_name_idx = s.find(name, cur_str_idx)
-        if random.random() < prb:
-            modified_name = modify_name(name)
-            s = s[:orig_name_idx] + modified_name + s[orig_name_idx+len(name):]
-            if orig_name_idx == 0 and s[0].islower(): 
-                s = s[0].upper() + s[1:] # Make sure first char of the sentence is capitalized
-                cur_str_idx = orig_name_idx + len(modified_name)        
-        else:
-            cur_str_idx = orig_name_idx + len(name)
-            
-    return s                      
+	'''
+	Modifies a name in string s with probability prb.
+	'''
+	name_words = identify_names(s)
+	cur_str_idx = 0
+	for idx,name in enumerate(name_words):
+		orig_name_idx = s.find(name, cur_str_idx)
+		if random.random() < prb:
+			modified_name = modify_name(name)
+			s = s[:orig_name_idx] + modified_name + s[orig_name_idx+len(name):]
+			if orig_name_idx == 0 and s[0].islower(): 
+				s = s[0].upper() + s[1:] # Make sure first char of the sentence is capitalized
+				cur_str_idx = orig_name_idx + len(modified_name)		
+		else:
+			cur_str_idx = orig_name_idx + len(name)
+			
+	return s					  
 
 def identify_names(s):
-    '''
-    @param s String to extract all names from
-    @return List of token (word) indices in s that are names.
-    '''
-    global _name_list
+	'''
+	@param s String to extract all names from
+	@return List of token (word) indices in s that are names.
+	'''
+	global _name_list
 
-    name_words = []
-    
-    for word in nltk.word_tokenize(s):
-        if word in _name_list:
-            name_words.append(word)
-            
-    return name_words
-    
+	name_words = []
+	
+	for word in nltk.word_tokenize(s):
+		if word in _name_list:
+			name_words.append(word)
+			
+	return name_words
+	
 def modify_name(s):
 	'''
 	@param s String containing name to modify
@@ -170,17 +170,17 @@ def prepend_social(s, prb=1.0):
 			"Everybody thinks so.",
 			"I get thousands of tweets about this every day."]
 	if random.random() < prb:
-		s = ' '.join([random.choice(social), s])
+		s = ' '.join([random.choice(socials), s])
 	return s
 
 
 def append_affirmation(s, prb=1.0):
-    affirmations = ['I\'m all for it.', 
-                    'You know it\'s true.',          
-        			'Believe me.']
-    if random.random() < prb:
-        s = ' '.join([s,random.choice(affirmations)])
-    return s
+	affirmations = ['I\'m all for it.', 
+					'You know it\'s true.',		  
+					'Believe me.']
+	if random.random() < prb:
+		s = ' '.join([s,random.choice(affirmations)])
+	return s
 
 
 def test_all_functions(test_string):
@@ -241,61 +241,61 @@ def trumpify(text, prb=1.0):
 
 		
 class WebSocketHandler(tornado.websocket.WebSocketHandler):
-    def open(self):
-        print "Connection established."
+	def open(self):
+		print("Connection established.")
 
-    def check_origin(self, origin):
-        return True
+	def check_origin(self, origin):
+		return True
 
-    def on_message(self, message):
-        print "Received message: " + message
-        trump_msg = trumpify(json.loads(message))
-        print "Sending back: " + trump_msg
-        self.write_message(trump_msg)
+	def on_message(self, message):
+		print("Received message: " + message)
+		trump_msg = trumpify(json.loads(message))
+		print("Sending back: " + trump_msg)
+		self.write_message(trump_msg)
 
-    def on_close(self):
-        print "Connection closed."
+	def on_close(self):
+		print("Connection closed.")
 
 
 def make_app():
-    return tornado.web.Application([
-        (r"/", WebSocketHandler),
-    ])
+	return tornado.web.Application([
+		(r"/", WebSocketHandler),
+	])
 
-        
+		
 def main(argv):
-    mode = "test"
-    command_line_instructions = 'bestwords.py -i <test_string>'
-    try:
-        opts, args = getopt.getopt(argv,"lhi:",["config=","param2="])
-    except getopt.GetoptError:
-        print (command_line_instructions)
-        sys.exit()
-    if (len(opts) > 0):    
-        #print args
-        #print opts    
-        for opt, arg in opts:
-            #print opt
-            if opt == '-h':
-                print (command_line_instructions)
-                sys.exit()
-            elif opt in ("-i", "--param1"):
-                test_string = arg
-            elif opt in ("-l", "--live"):
-                mode = "live"
-    else:
-        test_string = "I thought I was good. I was wrong. I'm the best."
-        #test_string = "My friend and I were excited to go to the party."
+	mode = "test"
+	command_line_instructions = 'bestwords.py -i <test_string>'
+	try:
+		opts, args = getopt.getopt(argv,"lhi:",["config=","param2="])
+	except getopt.GetoptError:
+		print (command_line_instructions)
+		sys.exit()
+	if (len(opts) > 0):	
+		#print args
+		#print opts	
+		for opt, arg in opts:
+			#print opt
+			if opt == '-h':
+				print (command_line_instructions)
+				sys.exit()
+			elif opt in ("-i", "--param1"):
+				test_string = arg
+			elif opt in ("-l", "--live"):
+				mode = "live"
+	else:
+		test_string = "I thought I was good. I was wrong. I'm the best."
+		#test_string = "My friend and I were excited to go to the party."
   
-    if mode == 'test':
-        test_all_functions(test_string)
-    elif mode == 'live':
-        server = make_app()
-        server.listen(1234)
-        tornado.ioloop.IOLoop.instance().start()
-    
+	if mode == 'test':
+		test_all_functions(test_string)
+	elif mode == 'live':
+		server = make_app()
+		server.listen(1234)
+		tornado.ioloop.IOLoop.instance().start()
+	
 
-    
-    
+	
+	
 if __name__ == "__main__":
-    main( sys.argv[1:] ) 
+	main( sys.argv[1:] ) 
