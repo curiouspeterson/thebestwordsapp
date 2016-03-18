@@ -2,12 +2,15 @@ import sys, getopt
 import nltk
 import random
 from textblob import TextBlob
+from nltk.corpus import names
 
 
 #s = 'I have a dream'
 #text = nltk.word_tokenize(s)
 #nltk.pos_tag(text)
 #text[3:3] = ['great']
+
+_name_list = [name for name in names.words('male.txt')] + [name for name in names.words('female.txt')]
 
 
 def break_paragraph(p):
@@ -64,7 +67,47 @@ def insert_better(s):
 	new_s = ' '.join(tokens)
 	return new_s
 	
+def insult_names(s, prb):
+    '''
+        Modifies a name in string s with probability prb.
+    '''
+    name_words = identify_names(s)
+    cur_str_idx = 0
+    for idx,name in enumerate(name_words):
+        orig_name_idx = s.find(name, cur_str_idx)
+        if random.random() < prb:
+            modified_name = modify_name(name)
+            s = s[:orig_name_idx] + modified_name + s[orig_name_idx+len(name):]
+            if orig_name_idx == 0 and s[0].islower(): 
+                s = s[0].upper() + s[1:] # Make sure first char of the sentence is capitalized
+                cur_str_idx = orig_name_idx + len(modified_name)        
+        else:
+            cur_str_idx = orig_name_idx + len(name)
+            
+    return s                      
 
+def identify_names(s):
+    '''
+    @param s String to extract all names from
+    @return List of token (word) indices in s that are names.
+    '''
+    global _name_list
+
+    name_words = []
+    
+    for word in nltk.word_tokenize(s):
+        if word in _name_list:
+            name_words.append(word)
+            
+    return name_words
+    
+def modify_name(s):
+	'''
+	@param s String containing name to modify
+	@return New string including modifying adjective
+	'''
+	negative_modifiers = ['crazy', 'little', 'lyin\'', 'tiny', 'pathetic', 'idiotic']
+	return ' '.join([negative_modifiers[random.randrange(0,len(negative_modifiers))], s])
 
 ## Textblob can use a whole paragraph, and iterate over sentences. 
 ## It can also do pos tagging
@@ -134,6 +177,9 @@ def test_all_functions(test_string):
 	print()
 	print('insert better:')
 	print(insert_better(test_string))
+	print()
+	print('insult names:')
+	print(insult_names(test_string, 1.))
 	print()
 	print('breaking paragraph/sentence down:')
 	for sentence in break_paragraph(test_string):
