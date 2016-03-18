@@ -4,19 +4,36 @@
   <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
   <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
   <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
-  <title>Dead simple skeleton</title>
+  <title>Trumpify Your Text</title>
   <script src="/app.js"></script>
   <script>require('initialize');</script>
   <link rel="stylesheet" type="text/css" href="app.css">
   <link href='https://fonts.googleapis.com/css?family=Pinyon+Script' rel='stylesheet' type='text/css'>
+  <script src="jquery-1.12.2.min.js"></script>
+  <script>
+     var $j = jQuery.noConflict(); // Use $j to reference JQuery selectors instead of $
+     function trumpify() {
+        var ws = new WebSocket("ws://localhost:1234");
+        ws.onmessage = function (evt) {
+            console.log(evt.data)
+           $j('#srctext').val(evt.data);
+        }
+        ws.onopen = function () {
+            ws.send(JSON.stringify($j('#srctext').val()));
+        }
+        ws.onerror = function () {
+            alert("Could not get the best words. Websocket connection failed. Please run \"python bestwords.py --live\"");
+        }
+     }
+  </script>
 </head>
 <body>
   <h1>Trumpify Your Text</h1>
   <div class="set-pick-small"></div>
-  <div class="text"><textarea></textarea></div>
+  <div class="text"><textarea id="srctext"></textarea></div>
   <div class="set-pick-med"></div>
+<<<<<<< HEAD
   <div class="btn btn-wrapper"><button class="translateBtn">Translate</button></div>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.8/clipboard.min.js"></script>
-
 </body>
 </html>
